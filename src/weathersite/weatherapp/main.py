@@ -1,5 +1,5 @@
 import random
-import requests
+import httpx  # Replaced requests with httpx for Cloudflare compatibility
 
 
 def get_city_images(city_name):
@@ -19,7 +19,7 @@ def get_city_images(city_name):
             "srlimit": 20,
             "format": "json",
         }
-        res = requests.get(api_url, params=search_params, headers=headers, timeout=10)
+        res = httpx.get(api_url, params=search_params, headers=headers, timeout=10.0)
         res.raise_for_status()
         data = res.json()
 
@@ -39,7 +39,6 @@ def get_city_images(city_name):
         if not titles:
             return urls
 
-        # Get direct URLs for all chosen titles in one request
         info_params = {
             "action": "query",
             "titles": "|".join(titles),
@@ -48,7 +47,7 @@ def get_city_images(city_name):
             "iiurlwidth": 1920,
             "format": "json",
         }
-        info_res = requests.get(api_url, params=info_params, headers=headers, timeout=10)
+        info_res = httpx.get(api_url, params=info_params, headers=headers, timeout=10.0)
         info_res.raise_for_status()
         info_data = info_res.json()
 
@@ -70,7 +69,7 @@ def fetch_weather(city_name):
     """Fetch 7-day weather forecast + a random city image."""
     geo_url = "https://geocoding-api.open-meteo.com/v1/search"
     geo_params = {"name": city_name, "count": 1, "language": "en", "format": "json"}
-    geo_res = requests.get(geo_url, params=geo_params, timeout=10)
+    geo_res = httpx.get(geo_url, params=geo_params, timeout=10.0)
     geo_res.raise_for_status()
     geo_data = geo_res.json()
 
@@ -90,7 +89,7 @@ def fetch_weather(city_name):
         "timezone": "auto",
         "forecast_days": 7,
     }
-    weather_res = requests.get(weather_url, params=weather_params, timeout=10)
+    weather_res = httpx.get(weather_url, params=weather_params, timeout=10.0)
     weather_res.raise_for_status()
     data = weather_res.json()
 
