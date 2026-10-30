@@ -1,11 +1,9 @@
 from django.shortcuts import render
 from .main import fetch_weather
 
-
 def weather_view(request):
     city = request.GET.get("city", "").strip()
     context = {}
-
     if city:
         try:
             result = fetch_weather(city)
@@ -15,5 +13,4 @@ def weather_view(request):
                 context["weather"] = result
         except Exception as e:
             context["error"] = f"Request failed: {e}"
-
     return render(request, "weatherapp/weather.html", context)
